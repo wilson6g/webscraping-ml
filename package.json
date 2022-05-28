@@ -1,0 +1,17 @@
+{
+  "name": "webscraping-ml",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:wilson6g/webscraping-ml.git",
+  "author": "wilson6g <wilsonpinheirodev@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  },
+  "dependencies": {
+    "puppeteer": "^14.1.1"
+  }
+}
