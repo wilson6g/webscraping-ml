@@ -1,15 +1,16 @@
 const puppeteer = require('puppeteer');
 
 const url = "https://www.mercadolivre.com.br/";
-const searchBy = "notebook acer nitro 5";
-var counter = 0;
 
 const items = [];
 
-(async () => {
+const searchItem = (async (request, response) => {
+
+  const { searchBy } = request.body;
+
   const args = puppeteer.defaultArgs().filter(arg => arg !== '--disable-site-isolation-trials');
   args.push("--disable-site-isolation-trials");
-  const browser = await puppeteer.launch({ headless: true, ignoreDefault: true, args });
+  const browser = await puppeteer.launch({  ignoreDefault: true, args });
   const page = await browser.newPage();
 
   await page.goto(url);
@@ -28,8 +29,6 @@ const items = [];
   const links = await page.$$eval(".ui-search-result__image > a", (element) => element.map(link => link.href));
 
   for (const link of links) {
-    console.log("Item " + counter);
-
     await page.goto(link);
     await page.waitForSelector(".ui-pdp-title");
 
@@ -39,7 +38,7 @@ const items = [];
     const seller = await page.evaluate(() => {
       const element = document.querySelector(".ui-pdp-seller__link-trigger > a > span");
 
-      if(!element) return "";
+      if (!element) return "";
       return element.innerText;
     });
 
@@ -53,10 +52,13 @@ const items = [];
     console.log(item);
 
     items.push(item);
-
-    counter++;
   }
 
-  await page.waitForTimeout(3000);
   await browser.close();
-})();
+
+  response.status(200).json(items).send();
+
+  items.length = 0;
+});
+
+module.exports = searchItem;
